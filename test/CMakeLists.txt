@@ -198,11 +198,14 @@ endif()
 set(TEST_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/output")
 file(MAKE_DIRECTORY "${TEST_OUTPUT}")
 
-set(tiff_test_extra_args
-    "-DTIFFCP=$<TARGET_FILE:tiffcp>"
-    "-DTIFFINFO=$<TARGET_FILE:tiffinfo>"
-    "-DTIFFSPLIT=$<TARGET_FILE:tiffsplit>"
-    "-DLIBTIFF=$<TARGET_FILE:tiff>")
+set(tiff_test_extra_args "-DLIBTIFF=$<TARGET_FILE:tiff>")
+
+if(tiff-tools)
+  list(APPEND tiff_test_extra_args "-DTIFFCP=$<TARGET_FILE:tiffcp>")
+  list(APPEND tiff_test_extra_args "-DTIFFINFO=$<TARGET_FILE:tiffinfo>")
+  list(APPEND tiff_test_extra_args "-DTIFFSPLIT=$<TARGET_FILE:tiffsplit>")
+endif()
+
 if(WIN32)
   list(APPEND tiff_test_extra_args "-DWIN32=${WIN32}")
 endif()
@@ -343,7 +346,7 @@ foreach(target IN LISTS simple_tests)
   tiff_test_stdout_noargs("${target}" "${target}")
 endforeach()
 
-
+if(tiff-tools)
 # PPM
 add_convert_test(ppm2tiff miniswhite "" "images/miniswhite-1c-1b.pbm" TRUE)
 add_convert_test(ppm2tiff minisblack "" "images/minisblack-1c-8b.pgm" TRUE)
@@ -394,27 +397,28 @@ add_test(NAME "tiffcp-split-join"
          ${tiff_test_extra_args}
          -P "${CMAKE_CURRENT_SOURCE_DIR}/TiffSplitTest.cmake")
 
-# PDF
-add_stdout_test(tiff2pdf "" "" "images/miniswhite-1c-1b.tiff" TRUE)
+  # PDF
+  add_stdout_test(tiff2pdf "" "" "images/miniswhite-1c-1b.tiff" TRUE)
 
-# PS
-add_stdout_test(tiff2ps "ps-1" "-a -p -1" "images/miniswhite-1c-1b.tiff" TRUE)
-add_stdout_test(tiff2ps "ps-2" "-a -p -2" "images/miniswhite-1c-1b.tiff" TRUE)
-add_stdout_test(tiff2ps "ps-3" "-a -p -3" "images/miniswhite-1c-1b.tiff" TRUE)
-add_stdout_test(tiff2ps "eps-1" "-e -1" "images/miniswhite-1c-1b.tiff" TRUE)
+  # PS
+  add_stdout_test(tiff2ps "ps-1" "-a -p -1" "images/miniswhite-1c-1b.tiff" TRUE)
+  add_stdout_test(tiff2ps "ps-2" "-a -p -2" "images/miniswhite-1c-1b.tiff" TRUE)
+  add_stdout_test(tiff2ps "ps-3" "-a -p -3" "images/miniswhite-1c-1b.tiff" TRUE)
+  add_stdout_test(tiff2ps "eps-1" "-e -1" "images/miniswhite-1c-1b.tiff" TRUE)
 
-# BW
-add_convert_tests(tiff2bw default      ""                         RGBIMAGES TRUE)
+  # BW
+  add_convert_tests(tiff2bw default      ""                         RGBIMAGES TRUE)
 
-# RGBA
-add_convert_tests(tiff2rgba default    ""                         TIFFIMAGES TRUE)
-# RGBA (old-jpeg)
-add_convert_tests(tiff2rgba default    ""                         TIFFIMAGES_OJPEG TRUE)
-# Test rotations
-add_convert_tests(tiffcrop  R90        "-R90"                     TIFFIMAGES TRUE)
-# Test flip (mirror)
-add_convert_tests(tiffcrop  doubleflip "-F both"                  TIFFIMAGES TRUE)
-# Test extracting a section 60 pixels wide and 60 pixels high
-add_convert_tests(tiffcrop  extract    "-U px -E top -X 60 -Y 60" TIFFIMAGES TRUE)
-# Test extracting the first and fourth quarters from the left side.
-add_convert_tests(tiffcrop  extractz14 "-E left -Z1:4,2:4"        TIFFIMAGES TRUE)
+  # RGBA
+  add_convert_tests(tiff2rgba default    ""                         TIFFIMAGES TRUE)
+  # RGBA (old-jpeg)
+  add_convert_tests(tiff2rgba default    ""                         TIFFIMAGES_OJPEG TRUE)
+  # Test rotations
+  add_convert_tests(tiffcrop  R90        "-R90"                     TIFFIMAGES TRUE)
+  # Test flip (mirror)
+  add_convert_tests(tiffcrop  doubleflip "-F both"                  TIFFIMAGES TRUE)
+  # Test extracting a section 60 pixels wide and 60 pixels high
+  add_convert_tests(tiffcrop  extract    "-U px -E top -X 60 -Y 60" TIFFIMAGES TRUE)
+  # Test extracting the first and fourth quarters from the left side.
+  add_convert_tests(tiffcrop  extractz14 "-E left -Z1:4,2:4"        TIFFIMAGES TRUE)
+endif()
