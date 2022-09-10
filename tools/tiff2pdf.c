@@ -2753,7 +2753,7 @@ dataready:
 	TIFFSetField(output, TIFFTAG_IMAGEWIDTH, t2p->tiff_width);
 	TIFFSetField(output, TIFFTAG_IMAGELENGTH, t2p->tiff_length);
 	TIFFSetField(output, TIFFTAG_ROWSPERSTRIP, t2p->tiff_length);
-	TIFFSetField(output, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(output, TIFFTAG_PLANARCONFIG, t2p->tiff_planar);
 	TIFFSetField(output, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
 
 	switch(t2p->pdf_compression){
@@ -3260,7 +3260,7 @@ tsize_t t2p_readwrite_pdf_image_tile(T2P* t2p, TIFF* input, TIFF* output, ttile_
 			TIFFTAG_ROWSPERSTRIP, 
 			t2p->tiff_tiles[t2p->pdf_page].tiles_edgetilelength);
 	}
-	TIFFSetField(output, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(output, TIFFTAG_PLANARCONFIG, t2p->tiff_planar);
 	TIFFSetField(output, TIFFTAG_FILLORDER, FILLORDER_MSB2LSB);
 
 	switch(t2p->pdf_compression){
