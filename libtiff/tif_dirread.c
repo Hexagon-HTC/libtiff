@@ -1657,7 +1657,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryShortArray(TIFF* tif, TIFFDirEnt
 		case TIFF_SHORT:
 			*value=(uint16_t*)origdata;
 			if (tif->tif_flags&TIFF_SWAB)
-				TIFFSwabArrayOfShort(*value,count);  
+				TIFFSwabArrayOfShort(*value,count);
 			return(TIFFReadDirEntryErrOk);
 		case TIFF_SSHORT:
 			{
@@ -3923,7 +3923,7 @@ TIFFReadDirectory(TIFF* tif)
 			}
 		}
 	}
-        
+
 	tif->tif_flags &= ~TIFF_BEENWRITING;    /* reset before new dir */
 	tif->tif_flags &= ~TIFF_BUF4WRITE;      /* reset before new dir */
 	tif->tif_flags &= ~TIFF_CHOPPEDUPARRAYS;
@@ -4005,7 +4005,7 @@ TIFFReadDirectory(TIFF* tif)
 				TIFFWarningExt(tif->tif_clientdata, module,
 				    "Unknown field with tag %"PRIu16" (0x%"PRIx16") encountered",
 				    dp->tdir_tag,dp->tdir_tag);
-				/* the following knowingly leaks the 
+				/* the following knowingly leaks the
 				   anonymous field structure */
 				if (!_TIFFMergeFields(tif,
 					_TIFFCreateAnonField(tif,
@@ -4095,14 +4095,57 @@ TIFFReadDirectory(TIFF* tif)
 		MissingRequired(tif,"ImageLength");
 		goto bad;
 	}
-
+	/*
+	 * Setup appropriate structures (by strip or by tile)
+	 */
+	if (!TIFFFieldSet(tif, FIELD_TILEDIMENSIONS)) {
+		tif->tif_dir.td_nstrips = TIFFNumberOfStrips(tif);
+		tif->tif_dir.td_tilewidth = tif->tif_dir.td_imagewidth;
+		tif->tif_dir.td_tilelength = tif->tif_dir.td_rowsperstrip;
+		tif->tif_dir.td_tiledepth = tif->tif_dir.td_imagedepth;
+		tif->tif_flags &= ~TIFF_ISTILED;
+	} else {
+		tif->tif_dir.td_nstrips = TIFFNumberOfTiles(tif);
+		tif->tif_flags |= TIFF_ISTILED;
+	}
+	if (!tif->tif_dir.td_nstrips) {
+		TIFFErrorExt(tif->tif_clientdata, module,
+		    "Cannot handle zero number of %s",
+		    isTiled(tif) ? "tiles" : "strips");
+		goto bad;
+	}
+	tif->tif_dir.td_stripsperimage = tif->tif_dir.td_nstrips;
+	if (tif->tif_dir.td_planarconfig == PLANARCONFIG_SEPARATE)
+		tif->tif_dir.td_stripsperimage /= tif->tif_dir.td_samplesperpixel;
+	if (!TIFFFieldSet(tif, FIELD_STRIPOFFSETS)) {
+#ifdef OJPEG_SUPPORT
+		if ((tif->tif_dir.td_compression==COMPRESSION_OJPEG) &&
+		    (isTiled(tif)==0) &&
+		    (tif->tif_dir.td_nstrips==1)) {
+			/*
+			 * XXX: OJPEG hack.
+			 * If a) compression is OJPEG, b) it's not a tiled TIFF,
+			 * and c) the number of strips is 1,
+			 * then we tolerate the absence of stripoffsets tag,
+			 * because, presumably, all required data is in the
+			 * JpegInterchangeFormat stream.
+			 */
+			TIFFSetFieldBit(tif, FIELD_STRIPOFFSETS);
+		} else
+#endif
+        {
+			MissingRequired(tif,
+				isTiled(tif) ? "TileOffsets" : "StripOffsets");
+			goto bad;
+		}
+	}
 	/*
 	 * Second pass: extract other information.
 	 */
 	for (di=0, dp=dir; di<dircount; di++, dp++)
 	{
 		if (!dp->tdir_ignore) {
-			switch (dp->tdir_tag) 
+			switch (dp->tdir_tag)
 			{
 				case TIFFTAG_MINSAMPLEVALUE:
 				case TIFFTAG_MAXSAMPLEVALUE:
@@ -4376,7 +4419,7 @@ TIFFReadDirectory(TIFF* tif)
 	 * and thus influences the number of strips in the separate planarconfig.
 	 */
 	if (!TIFFFieldSet(tif, FIELD_TILEDIMENSIONS)) {
-		tif->tif_dir.td_nstrips = TIFFNumberOfStrips(tif);  
+		tif->tif_dir.td_nstrips = TIFFNumberOfStrips(tif);
 		tif->tif_dir.td_tilewidth = tif->tif_dir.td_imagewidth;
 		tif->tif_dir.td_tilelength = tif->tif_dir.td_rowsperstrip;
 		tif->tif_dir.td_tiledepth = tif->tif_dir.td_imagedepth;
@@ -4613,7 +4656,7 @@ TIFFReadDirectory(TIFF* tif)
 	 */
 	if ((tif->tif_dir.td_planarconfig==PLANARCONFIG_CONTIG)&&
 	    (tif->tif_dir.td_nstrips==1)&&
-	    (tif->tif_dir.td_compression==COMPRESSION_NONE)&&  
+	    (tif->tif_dir.td_compression==COMPRESSION_NONE)&&
 	    ((tif->tif_flags&(TIFF_STRIPCHOP|TIFF_ISTILED))==TIFF_STRIPCHOP))
         {
             ChopUpSingleUncompressedStrip(tif);
@@ -4631,7 +4674,7 @@ TIFFReadDirectory(TIFF* tif)
         }
 
         /*
-         * Clear the dirty directory flag. 
+         * Clear the dirty directory flag.
          */
 	tif->tif_flags &= ~TIFF_DIRTYDIRECT;
 	tif->tif_flags &= ~TIFF_DIRTYSTRIP;
@@ -4830,7 +4873,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 				}
 			}
 			if (!dp->tdir_ignore) {
-				switch (dp->tdir_tag) 
+				switch (dp->tdir_tag)
 				{
 					case EXIFTAG_SUBJECTDISTANCE:
                         if(!TIFFFieldIsAnonymous(fip)) {
@@ -4863,7 +4906,7 @@ TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
 {
 	const TIFFFieldArray* exifFieldArray;
 	exifFieldArray = _TIFFGetExifFields();
-	return TIFFReadCustomDirectory(tif, diroff, exifFieldArray);  
+	return TIFFReadCustomDirectory(tif, diroff, exifFieldArray);
 }
 
 /*
@@ -5003,13 +5046,13 @@ MissingRequired(TIFF* tif, const char* tagname)
 static int
 TIFFCheckDirOffset(TIFF* tif, uint64_t diroff)
 {
-	uint16_t n;
+	uint32_t n;
 
 	if (diroff == 0)			/* no more directories */
 		return 0;
-	if (tif->tif_dirnumber == 65535) {
+	if (tif->tif_dirnumber == (uint32_t) -1) {
 	    TIFFErrorExt(tif->tif_clientdata, "TIFFCheckDirOffset",
-			 "Cannot handle more than 65535 TIFF directories");
+			 "Cannot handle more than 2^32-1 of TIFF directories");
 	    return 0;
 	}
 
@@ -5031,8 +5074,8 @@ TIFFCheckDirOffset(TIFF* tif, uint64_t diroff)
                                                    tif->tif_dirnumber, 2 * sizeof(uint64_t), "for IFD list");
 		if (!new_dirlist)
 			return 0;
-		if( tif->tif_dirnumber >= 32768 )
-		    tif->tif_dirlistsize = 65535;
+		if( tif->tif_dirnumber >= ((uint32_t)-1)/2)
+		    tif->tif_dirlistsize = (uint32_t)-1;
 		else
 		    tif->tif_dirlistsize = 2 * tif->tif_dirnumber;
 		tif->tif_dirlist = new_dirlist;
@@ -6371,7 +6414,7 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32_t nstrips, uint64_t** l
 	err=TIFFReadDirEntryLong8ArrayWithLimit(tif,dir,&data,nstrips);
 	if (err!=TIFFReadDirEntryErrOk)
 	{
-		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag); 
+		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag);
 		TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",0);
 		return(0);
 	}

@@ -2,23 +2,23 @@
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
- * Permission to use, copy, modify, distribute, and sell this software and 
+ * Permission to use, copy, modify, distribute, and sell this software and
  * its documentation for any purpose is hereby granted without fee, provided
  * that (i) the above copyright notices and this permission notice appear in
  * all copies of the software and related documentation, and (ii) the names of
  * Sam Leffler and Silicon Graphics may not be used in any advertising or
  * publicity relating to the software without the specific, prior written
  * permission of Sam Leffler and Silicon Graphics.
- * 
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
- * 
+ *
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ *
  * IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
  * ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
  * OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
- * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+ * WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+ * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
 
@@ -89,7 +89,7 @@ static int
 setExtraSamples(TIFF* tif, va_list ap, uint32_t* v)
 {
 /* XXX: Unassociated alpha data == 999 is a known Corel Draw bug, see below */
-#define EXTRASAMPLE_COREL_UNASSALPHA 999 
+#define EXTRASAMPLE_COREL_UNASSALPHA 999
 
 	uint16_t* va;
 	uint32_t i;
@@ -108,7 +108,7 @@ setExtraSamples(TIFF* tif, va_list ap, uint32_t* v)
 			 * XXX: Corel Draw is known to produce incorrect
 			 * ExtraSamples tags which must be patched here if we
 			 * want to be able to open some of the damaged TIFF
-			 * files: 
+			 * files:
 			 */
 			if (va[i] == EXTRASAMPLE_COREL_UNASSALPHA)
 				va[i] = EXTRASAMPLE_UNASSALPHA;
@@ -136,7 +136,7 @@ setExtraSamples(TIFF* tif, va_list ap, uint32_t* v)
 }
 
 /*
- * Confirm we have "samplesperpixel" ink names separated by \0.  Returns 
+ * Confirm we have "samplesperpixel" ink names separated by \0.  Returns
  * zero if the ink names are not as expected.
  */
 static uint32_t
@@ -181,9 +181,9 @@ _TIFFVSetField(TIFF* tif, uint32_t tag, va_list ap)
 	    return 0;
 	/*
 	 * We want to force the custom code to be used for custom
-	 * fields even if the tag happens to match a well known 
+	 * fields even if the tag happens to match a well known
 	 * one - important for reinterpreted handling of standard
-	 * tag values in custom directories (i.e. EXIF) 
+	 * tag values in custom directories (i.e. EXIF)
 	 */
 	if (fip->field_bit == FIELD_CUSTOM) {
 		standard_tag = 0;
@@ -635,11 +635,11 @@ _TIFFVSetField(TIFF* tif, uint32_t tag, va_list ap)
 				goto end;
 			}
 
-			if (fip->field_tag == TIFFTAG_DOTRANGE 
+			if (fip->field_tag == TIFFTAG_DOTRANGE
 			    && strcmp(fip->field_name,"DotRange") == 0) {
 				/* TODO: This is an evil exception and should not have been
 				   handled this way ... likely best if we move it into
-				   the directory structure with an explicit field in 
+				   the directory structure with an explicit field in
 				   libtiff 4.1 and assign it a FIELD_ value */
 				uint16_t v2[2];
 				v2[0] = (uint16_t)va_arg(ap, int);
@@ -790,7 +790,7 @@ _TIFFVSetField(TIFF* tif, uint32_t tag, va_list ap)
 	}
 	if (status) {
 		const TIFFField* fip2=TIFFFieldWithTag(tif,tag);
-		if (fip2)                
+		if (fip2)
 			TIFFSetFieldBit(tif, fip2->field_bit);
 		tif->tif_flags |= TIFF_DIRTYDIRECT;
 	}
@@ -933,7 +933,7 @@ TIFFUnsetField(TIFF* tif, uint32_t tag)
         int i;
 
         for (i = 0; i < td->td_customValueCount; i++) {
-                
+
             tv = td->td_customValues + i;
             if( tv->info->field_tag == tag )
                 break;
@@ -948,7 +948,7 @@ TIFFUnsetField(TIFF* tif, uint32_t tag)
             td->td_customValueCount--;
         }
     }
-        
+
     tif->tif_flags |= TIFF_DIRTYDIRECT;
 
     return (1);
@@ -979,14 +979,14 @@ _TIFFVGetField(TIFF* tif, uint32_t tag, va_list ap)
 
 	/*
 	 * We want to force the custom code to be used for custom
-	 * fields even if the tag happens to match a well known 
+	 * fields even if the tag happens to match a well known
 	 * one - important for reinterpreted handling of standard
-	 * tag values in custom directories (i.e. EXIF) 
+	 * tag values in custom directories (i.e. EXIF)
 	 */
 	if (fip->field_bit == FIELD_CUSTOM) {
 		standard_tag = 0;
 	}
-	
+
         if( standard_tag == TIFFTAG_NUMBEROFINKS )
         {
             int i;
@@ -1241,7 +1241,7 @@ _TIFFVGetField(TIFF* tif, uint32_t tag, va_list ap)
 						   && strcmp(fip->field_name,"DotRange") == 0) {
 						/* TODO: This is an evil exception and should not have been
 						   handled this way ... likely best if we move it into
-						   the directory structure with an explicit field in 
+						   the directory structure with an explicit field in
 						   libtiff 4.1 and assign it a FIELD_ value */
 						*va_arg(ap, uint16_t*) = ((uint16_t *)tv->value)[0];
 						*va_arg(ap, uint16_t*) = ((uint16_t *)tv->value)[1];
@@ -1505,7 +1505,7 @@ TIFFDefaultDirectory(TIFF* tif)
 	const TIFFFieldArray* tiffFieldArray;
 
 	tiffFieldArray = _TIFFGetFields();
-	_TIFFSetupFields(tif, tiffFieldArray);   
+	_TIFFSetupFields(tif, tiffFieldArray);
 
 	_TIFFmemset(td, 0, sizeof (*td));
 	td->td_fillorder = FILLORDER_MSB2LSB;
@@ -1518,7 +1518,7 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_tilelength = 0;
 	td->td_tiledepth = 1;
 #ifdef STRIPBYTECOUNTSORTED_UNUSED
-	td->td_stripbytecountsorted = 1; /* Our own arrays always sorted. */  
+	td->td_stripbytecountsorted = 1; /* Our own arrays always sorted. */
 #endif
 	td->td_resolutionunit = RESUNIT_INCH;
 	td->td_sampleformat = SAMPLEFORMAT_UINT;
@@ -1526,9 +1526,9 @@ TIFFDefaultDirectory(TIFF* tif)
 	td->td_ycbcrsubsampling[0] = 2;
 	td->td_ycbcrsubsampling[1] = 2;
 	td->td_ycbcrpositioning = YCBCRPOSITION_CENTERED;
-	tif->tif_postdecode = _TIFFNoPostDecode;  
+	tif->tif_postdecode = _TIFFNoPostDecode;
 	tif->tif_foundfield = NULL;
-	tif->tif_tagmethods.vsetfield = _TIFFVSetField;  
+	tif->tif_tagmethods.vsetfield = _TIFFVSetField;
 	tif->tif_tagmethods.vgetfield = _TIFFVGetField;
 	tif->tif_tagmethods.printdir = NULL;
 	/* additional default values */
@@ -1723,12 +1723,12 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_t* nextdir, uint64_t* off)
 /*
  * Count the number of directories in a file.
  */
-uint16_t
-TIFFNumberOfDirectories(TIFF* tif)
+uint32_t
+TIFFNumberOfDirectories32(TIFF* tif)
 {
-	static const char module[] = "TIFFNumberOfDirectories";
+	static const char module[] = "TIFFNumberOfDirectories32";
 	uint64_t nextdir;
-	uint16_t n;
+	uint32_t n;
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
 	else
@@ -1736,18 +1736,34 @@ TIFFNumberOfDirectories(TIFF* tif)
 	n = 0;
 	while (nextdir != 0 && TIFFAdvanceDirectory(tif, &nextdir, NULL))
         {
-                if (n != 65535) {
+                if (n != 500000) {
                         ++n;
                 }
 		else
                 {
                         TIFFErrorExt(tif->tif_clientdata, module,
-                                     "Directory count exceeded 65535 limit,"
+                                     "Directory count exceeded 500000 limit,"
                                      " giving up on counting.");
-                        return (65535);
+                        return (500000);
                 }
         }
 	return (n);
+}
+
+uint16_t
+TIFFNumberOfDirectories(TIFF* tif)
+{
+    static const char module[] = "TIFFNumberOfDirectories";
+    uint32_t n;
+
+    n = TIFFNumberOfDirectories32(tif);
+    if (n > 65535) {
+        TIFFErrorExt(tif->tif_clientdata, module,
+            "Directory count exceeded 65535 limit,"
+            " try using TIFFNumberOfDirectories32 for increased limit.");
+        return (65535);
+    }
+    return ((uint16_t)n);
 }
 
 /*
@@ -1755,10 +1771,10 @@ TIFFNumberOfDirectories(TIFF* tif)
  * NB: Directories are numbered starting at 0.
  */
 int
-TIFFSetDirectory(TIFF* tif, uint16_t dirn)
+TIFFSetDirectory32(TIFF* tif, uint32_t dirn)
 {
 	uint64_t nextdir;
-	uint16_t n;
+	uint32_t n;
 
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
@@ -1780,6 +1796,12 @@ TIFFSetDirectory(TIFF* tif, uint16_t dirn)
 	 */
 	tif->tif_dirnumber = 0;
 	return (TIFFReadDirectory(tif));
+}
+
+int
+TIFFSetDirectory(TIFF* tif, uint16_t dirn)
+{
+    return TIFFSetDirectory32(tif, (uint32_t)dirn);
 }
 
 /*

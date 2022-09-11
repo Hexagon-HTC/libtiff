@@ -120,7 +120,7 @@ typedef void* thandle_t;       /* client data handle */
 #define TIFFPRINT_JPEGACTABLES 0x200  /* JPEG AC tables */
 #define TIFFPRINT_JPEGDCTABLES 0x200  /* JPEG DC tables */
 
-/* 
+/*
  * Colour conversion stuff
  */
 
@@ -180,7 +180,7 @@ typedef struct _TIFFRGBAImage TIFFRGBAImage;
 /*
  * The image reading and conversion routines invoke
  * ``put routines'' to copy/image/whatever tiles of
- * raw image data.  A default set of routines are 
+ * raw image data.  A default set of routines are
  * provided to convert/copy raw image data to 8-bit
  * packed ABGR format rasters.  Applications can supply
  * alternate routines that unpack the data into a
@@ -397,12 +397,14 @@ extern TIFFMapFileProc TIFFGetMapFileProc(TIFF*);
 extern TIFFUnmapFileProc TIFFGetUnmapFileProc(TIFF*);
 extern uint32_t TIFFCurrentRow(TIFF*);
 extern uint16_t TIFFCurrentDirectory(TIFF*);
+extern uint32_t TIFFCurrentDirectory32(TIFF*);
 extern uint16_t TIFFNumberOfDirectories(TIFF*);
+extern uint32_t TIFFNumberOfDirectories32(TIFF*);
 extern uint64_t TIFFCurrentDirOffset(TIFF*);
 extern uint32_t TIFFCurrentStrip(TIFF*);
 extern uint32_t TIFFCurrentTile(TIFF* tif);
 extern int TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size);
-extern int TIFFWriteBufferSetup(TIFF* tif, void* bp, tmsize_t size);  
+extern int TIFFWriteBufferSetup(TIFF* tif, void* bp, tmsize_t size);
 extern int TIFFSetupStrips(TIFF *);
 extern int TIFFWriteCheck(TIFF*, int, const char *);
 extern void TIFFFreeDirectory(TIFF*);
@@ -412,6 +414,7 @@ extern int TIFFCreateEXIFDirectory(TIFF*);
 extern int TIFFCreateGPSDirectory(TIFF*);
 extern int TIFFLastDirectory(TIFF*);
 extern int TIFFSetDirectory(TIFF*, uint16_t);
+extern int TIFFSetDirectory32(TIFF*, uint32_t);
 extern int TIFFSetSubDirectory(TIFF*, uint64_t);
 extern int TIFFUnlinkDirectory(TIFF*, uint16_t);
 extern int TIFFSetField(TIFF*, uint32_t, ...);
