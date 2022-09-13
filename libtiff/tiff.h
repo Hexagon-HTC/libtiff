@@ -427,6 +427,7 @@ typedef enum {
 #define TIFFTAG_WRITERSERIALNUMBER      33405   /* device serial number */
 #define TIFFTAG_CFAREPEATPATTERNDIM	33421	/* dimensions of CFA pattern */
 #define TIFFTAG_CFAPATTERN		33422	/* color filter array pattern */
+#define TIFFTAG_BATTERYLEVEL		33423	/* battery level */
 /* tag 33432 is listed in the 6.0 spec w/ unknown ownership */
 #define	TIFFTAG_COPYRIGHT		33432	/* copyright string */
 /* Tags 33445-33452 are used for GEL fileformat, see
@@ -580,6 +581,95 @@ typedef enum {
 #define TIFFTAG_CURRENTICCPROFILE	50833	/* & */
 #define TIFFTAG_CURRENTPREPROFILEMATRIX	50834	/* & */
 
+/* DNG 1.2.0.0 */
+#define TIFFTAG_COLORIMETRICREFERENCE	50879	/* &colorimetric reference */
+#define TIFFTAG_CAMERACALIBRATIONSIGNATURE	50931	/* &camera calibration signature */
+#define TIFFTAG_PROFILECALIBRATIONSIGNATURE	50932	/* &profile calibration signature */
+#define TIFFTAG_EXTRACAMERAPROFILES	50933	/* &extra camera profiles */
+#define TIFFTAG_ASSHOTPROFILENAME	50934	/* &as shot profile name */
+#define TIFFTAG_NOISEREDUCTIONAPPLIED	50935	/* &amount of applied noise reduction */
+#define TIFFTAG_PROFILENAME		50936	/* &camera profile name */
+#define TIFFTAG_PROFILEHUESATMAPDIMS	50937	/* &dimensions of HSV mapping */
+#define TIFFTAG_PROFILEHUESATMAPDATA1	50938	/* &first HSV mapping table */
+#define TIFFTAG_PROFILEHUESATMAPDATA2	50939	/* &second HSV mapping table */
+#define TIFFTAG_PROFILETONECURVE	50940	/* &default tone curve */
+#define TIFFTAG_PROFILEEMBEDPOLICY	50941	/* &profile embedding policy */
+#define TIFFTAG_PROFILECOPYRIGHT	50942	/* &profile copyright information */
+#define TIFFTAG_FORWARDMATRIX1		50964	/* &matrix for mapping white balanced camera colors to XYZ D50 */
+#define TIFFTAG_FORWARDMATRIX2		50965	/* &matrix for mapping white balanced camera colors to XYZ D50 */
+#define TIFFTAG_PREVIEWAPPLICATIONNAME	50966	/* &name of application that created preview */
+#define TIFFTAG_PREVIEWAPPLICATIONVERSION	50967	/* &version of application that created preview */
+#define TIFFTAG_PREVIEWSETTINGSNAME	50968	/* &name of conversion settings */
+#define TIFFTAG_PREVIEWSETTINGSDIGEST	50969	/* &unique id of conversion settings */
+#define TIFFTAG_PREVIEWCOLORSPACE	50970	/* &preview color space */
+#define TIFFTAG_PREVIEWDATETIME		50971	/* &date/time preview was rendered */
+#define TIFFTAG_RAWIMAGEDIGEST		50972	/* &md5 of raw image data */
+#define TIFFTAG_ORIGINALRAWFILEDIGEST	50973	/* &md5 of the data stored in the OriginalRawFileData tag */
+#define TIFFTAG_SUBTILEBLOCKSIZE	50974	/* &subtile block size */
+#define TIFFTAG_ROWINTERLEAVEFACTOR	50975	/* &number of interleaved fields */
+#define TIFFTAG_PROFILELOOKTABLEDIMS	50981	/* &num of input samples in each dim of default "look" table */
+#define TIFFTAG_PROFILELOOKTABLEDATA	50982	/* &default "look" table for use as starting point */
+
+/* DNG 1.3.0.0 */
+#define TIFFTAG_OPCODELIST1		51008	/* &opcodes that should be applied to raw image after reading */
+#define TIFFTAG_OPCODELIST2		51009	/* &opcodes that should be applied after mapping to linear reference */
+#define TIFFTAG_OPCODELIST3		51022	/* &opcodes that should be applied after demosaicing */
+#define TIFFTAG_NOISEPROFILE		51041	/* &noise profile */
+
+/* DNG 1.4.0.0 */
+#define TIFFTAG_DEFAULTUSERCROP		51125	/* &default user crop rectangle in relative coords */
+#define TIFFTAG_DEFAULTBLACKRENDER	51110	/* &black rendering hint */
+#define TIFFTAG_BASELINEEXPOSUREOFFSET	51109	/* &baseline exposure offset */
+#define TIFFTAG_PROFILELOOKTABLEENCODING	51108	/* &3D LookTable indexing conversion */
+#define TIFFTAG_PROFILEHUESATMAPENCODING	51107	/* &3D HueSatMap indexing conversion */
+#define TIFFTAG_ORIGINALDEFAULTFINALSIZE	51089	/* &default final size of larger original file for this proxy */
+#define TIFFTAG_ORIGINALBESTQUALITYFINALSIZE	51090	/* &best quality final size of larger original file for this proxy */
+#define TIFFTAG_ORIGINALDEFAULTCROPSIZE	50191	/* &the default crop size of larger original file for this proxy */
+#define TIFFTAG_NEWRAWIMAGEDIGEST	51111	/* &modified MD5 digest of the raw image data */
+#define TIFFTAG_RAWTOPREVIEWGAIN	51112	/* &The gain between the main raw FD and the preview IFD containing this tag */
+
+/* DNG 1.5.0.0 */
+#define TIFFTAG_DEPTHFORMAT		51177	/* &encoding of the depth data in the file */
+#define TIFFTAG_DEPTHNEAR		51178	/* &distance from the camera represented by value 0 in the depth map */
+#define TIFFTAG_DEPTHFAR		51179	/* &distance from the camera represented by the maximum value in the depth map */
+#define TIFFTAG_DEPTHUNITS		51180	/* &measurement units for DepthNear and DepthFar */
+#define TIFFTAG_DEPTHMEASURETYPE	51181	/* &measurement geometry for the depth map */
+#define TIFFTAG_ENHANCEPARAMS		51182	/* &a string that documents how the enhanced image data was processed. */
+
+/* DNG 1.6.0.0 */
+#define TIFFTAG_PROFILEGAINTABLEMAP	52525	/* &spatially varying gain tables that can be applied as starting point */
+#define TIFFTAG_SEMANTICNAME		52526	/* &a string that identifies the semantic mask */
+#define TIFFTAG_SEMANTICINSTANCEID	52528	/* &a string that identifies a specific instance in a semantic mask */
+#define TIFFTAG_MASKSUBAREA		52536	/* &the crop rectangle of this IFD's mask, relative to the main image */
+#define TIFFTAG_RGBTABLES		52543	/* &color transforms to apply to masked image regions */
+#define TIFFTAG_CALIBRATIONILLUMINANT3	52529	/* &the illuminant used for the third set of color calibration tags */
+#define TIFFTAG_COLORMATRIX3		52531	/* &matrix to convert XYZ values to reference camera native color space under CalibrationIlluminant3 */
+#define TIFFTAG_CAMERACALIBRATION3	52530	/* &matrix to transform reference camera native space values to individual camera native space values under CalibrationIlluminant3 */
+#define TIFFTAG_REDUCTIONMATRIX3	52538	/* &dimensionality reduction matrix for use in color conversion to XYZ under CalibrationIlluminant3 */
+#define TIFFTAG_PROFILEHUESATMAPDATA3	52537	/* &the data for the third HSV table */
+#define TIFFTAG_FORWARDMATRIX3		52532	/* &matrix to map white balanced camera colors to XYZ D50 */
+#define TIFFTAG_ILLUMINANTDATA1		52533	/* &data for the first calibration illuminant */
+#define TIFFTAG_ILLUMINANTDATA2		52534	/* &data for the second calibration illuminant */
+#define TIFFTAG_ILLUMINANTDATA3		53535	/* &data for the third calibration illuminant */
+
+/* TIFF/EP */
+#define TIFFTAG_INTERLACE		34857	/* Number of multi-field images */
+#define TIFFTAG_TIMEZONEOFFSET		34858	/* Time zone offset relative to UTC */
+#define TIFFTAG_SELFTIMERMODE		34859	/* Number of seconds capture was delayed from button press */
+#define TIFFTAG_EP_FLASHENERGY		37387	/* Flash energy, or range if there is uncertainty */
+#define TIFFTAG_EP_SPATIALFREQUENCYRESPONSE	37388	/* Spatial frequency response */
+#define TIFFTAG_NOISE			37389	/* Camera noise measurement values */
+#define TIFFTAG_EP_FOCALPLANEXRESOLUTION	37390	/* Focal plane X resolution */
+#define TIFFTAG_EP_FOCALPLANEYRESOLUTION	37391	/* Focal plane Y resolution */
+#define TIFFTAG_EP_FOCALPLANERESOLUTIONUNIT	37392	/* Focal plane resolution unit */
+#define TIFFTAG_IMAGENUMBER		37393	/* Number of image when several of burst shot stored in same TIFF/EP */
+#define TIFFTAG_SECURITYCLASSIFICATION	37394	/* Security classification */
+#define TIFFTAG_IMAGEHISTORY		37395	/* Record of what has been done to the image */
+#define TIFFTAG_EP_EXPOSUREINDEX	37396	/* Exposure index */
+#define TIFFTAG_EP_STANDARDID		37398	/* TIFF/EP standard version, n.n.n.n */
+#define TIFFTAG_EP_SENSINGMETHOD	37399	/* Type of image sensor */
+
+
 #define TIFFTAG_RPCCOEFFICIENT          50844   /* Define by GDAL for geospatial georeferencing through RPC: http://geotiff.maptools.org/rpc_prop.html */
 
 #define	TIFFTAG_ALIAS_LAYER_METADATA	50784	/* Alias Sketchbook Pro layer usage description. */
@@ -587,8 +677,6 @@ typedef enum {
 /* GeoTIFF DGIWG */
 #define TIFFTAG_TIFF_RSID               50908   /* https://www.awaresystems.be/imaging/tiff/tifftags/tiff_rsid.html */
 #define TIFFTAG_GEO_METADATA            50909   /* https://www.awaresystems.be/imaging/tiff/tifftags/geo_metadata.html */
-
-#define TIFFTAG_EXTRACAMERAPROFILES 50933  /* http://wwwimages.adobe.com/www.adobe.com/content/dam/Adobe/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf */
 
 /* tag 65535 is an undefined tag used by Eastman Kodak */
 #define TIFFTAG_DCSHUESHIFTVALUES       65535   /* hue shift correction data */
