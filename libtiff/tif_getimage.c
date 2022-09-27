@@ -48,6 +48,7 @@ static const char photoTag[] = "PhotometricInterpretation";
  */
 #define FLIP_VERTICALLY 0x01
 #define FLIP_HORIZONTALLY 0x02
+#define ROTATE_90DEGREES 0x04
 
 /*
  * Color conversion constants. We will define display types here.
@@ -550,65 +551,36 @@ TIFFReadRGBAImage(TIFF* tif,
 					 ORIENTATION_BOTLEFT, stop);
 }
 
+/*
+ * Return value will have FLIP_VERTICALLY (1), FLIP_HORIZONTALLY (2) or
+ * ROTATE_90DEGREES (4) bits set if any of these transformations are
+ * needed to transform  from img->orientation to img->req_orientation.
+ *
+ * Because LibTIFF does not contain image rotation code, images with
+ * orientation > 4 will be loaded rotated by 90 degrees.
+ */
 static int 
 setorientation(TIFFRGBAImage* img)
 {
-	switch (img->orientation) {
-		case ORIENTATION_TOPLEFT:
-		case ORIENTATION_LEFTTOP:
-			if (img->req_orientation == ORIENTATION_TOPRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTTOP)
-				return FLIP_HORIZONTALLY;
-			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTBOT)
-				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTBOT)
-				return FLIP_VERTICALLY;
-			else
-				return 0;
-		case ORIENTATION_TOPRIGHT:
-		case ORIENTATION_RIGHTTOP:
-			if (img->req_orientation == ORIENTATION_TOPLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTTOP)
-				return FLIP_HORIZONTALLY;
-			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTBOT)
-				return FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTBOT)
-				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
-			else
-				return 0;
-		case ORIENTATION_BOTRIGHT:
-		case ORIENTATION_RIGHTBOT:
-			if (img->req_orientation == ORIENTATION_TOPLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTTOP)
-				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_TOPRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTTOP)
-				return FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_BOTLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTBOT)
-				return FLIP_HORIZONTALLY;
-			else
-				return 0;
-		case ORIENTATION_BOTLEFT:
-		case ORIENTATION_LEFTBOT:
-			if (img->req_orientation == ORIENTATION_TOPLEFT ||
-			    img->req_orientation == ORIENTATION_LEFTTOP)
-				return FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_TOPRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTTOP)
-				return FLIP_HORIZONTALLY | FLIP_VERTICALLY;
-			else if (img->req_orientation == ORIENTATION_BOTRIGHT ||
-			    img->req_orientation == ORIENTATION_RIGHTBOT)
-				return FLIP_HORIZONTALLY;
-			else
-				return 0;
-		default:	/* NOTREACHED */
-			return 0;
-	}
+  const uint16 flipbits[8] = {0,2,3,1,6,7,5,4};
+  uint16 flip_orient = flipbits[img->orientation - 1];
+  uint16 flip_req_or = flipbits[img->req_orientation - 1];
+  return (flip_orient & ~flip_req_or) | (~flip_orient & flip_req_or);
+
+  /*          TL TR BR BL LT RT RB LB <- Source orientation
+   * flipbits  0  2  3  1  6  7  5  4
+   *        +  -  -  -  -  -  -  -  -
+   * TL  0  |  0  2  3  1  6  7  5  4
+   * TR  2  |  2  0  1  3  4  5  7  6
+   * BR  3  |  3  1  0  2  5  4  6  7
+   * BL  1  |  1  3  2  0  7  6  4  5
+   * LT  6  |  6  4  5  7  0  1  3  2
+   * RT  7  |  7  5  4  6  1  0  2  3
+   * RB  5  |  5  7  6  4  3  2  0  1
+   * LB  4  |  4  6  7  5  2  3  1  0 |
+   *                                - return values
+   * ^ Target orientation
+   */
 }
 
 /*
