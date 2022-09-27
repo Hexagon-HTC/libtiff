@@ -475,7 +475,8 @@ TIFFInitOJPEG(TIFF* tif, int scheme)
 	   reliable. In any case, this decoder reads the compressed data itself,
 	   from the most reliable locations, and we need to notify encapsulating
 	   LibTiff not to read raw strips or tiles for us. */
-	tif->tif_flags|=TIFF_NOREADRAW;
+	/* tiff2pdf needs TIFFReadRawStrip, commenting out. */
+	/* tif->tif_flags|=TIFF_NOREADRAW; */
 	return(1);
 }
 
