@@ -7464,18 +7464,19 @@ writeSingleSection(TIFF *in, TIFF *out, struct image_data *image,
    }
    { uint16_t ninks;
      const char* inknames;
+     uint16_t samplesperpixel = image->spp;
      if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
        TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
        if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
 	 int inknameslen = strlen(inknames) + 1;
 	 const char* cp = inknames;
-	 while (ninks > 1) {
+	 while (samplesperpixel > 1) {
 	   cp = strchr(cp, '\0');
 	   if (cp) {
 	     cp++;
 	     inknameslen += (strlen(cp) + 1);
 	   }
-	   ninks--;
+	   samplesperpixel--;
          }
 	 TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
        }
@@ -8156,18 +8157,19 @@ writeCroppedImage(TIFF *in, TIFF *out, struct image_data *image,
    }
    { uint16_t ninks;
      const char* inknames;
+     uint16_t samplesperpixel = image->spp;
      if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
        TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
        if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
 	 int inknameslen = strlen(inknames) + 1;
 	 const char* cp = inknames;
-	 while (ninks > 1) {
+	 while (samplesperpixel > 1) {
 	   cp = strchr(cp, '\0');
 	   if (cp) {
 	     cp++;
 	     inknameslen += (strlen(cp) + 1);
 	   }
-	   ninks--;
+	   samplesperpixel--;
          }
 	 TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
        }

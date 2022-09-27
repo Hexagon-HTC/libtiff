@@ -933,16 +933,17 @@ tiffcp(TIFF* in, TIFF* out)
 	{
 		uint16_t ninks;
 		const char* inknames;
+		uint16_t spp = samplesperpixel;
 		if (TIFFGetField(in, TIFFTAG_NUMBEROFINKS, &ninks)) {
 			TIFFSetField(out, TIFFTAG_NUMBEROFINKS, ninks);
 			if (TIFFGetField(in, TIFFTAG_INKNAMES, &inknames)) {
 				int inknameslen = strlen(inknames) + 1;
 				const char* cp = inknames;
-				while (ninks > 1) {
+				while (spp > 1) {
 					cp = strchr(cp, '\0');
                                         cp++;
                                         inknameslen += (strlen(cp) + 1);
-					ninks--;
+					spp--;
 				}
 				TIFFSetField(out, TIFFTAG_INKNAMES, inknameslen, inknames);
 			}
