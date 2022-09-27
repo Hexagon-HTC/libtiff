@@ -1132,7 +1132,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryDataAndRealloc(
                             *pdest, already_read + to_read);
             if( new_dest == NULL )
             {
-                TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+                TIFFErrorExtR(tif, tif->tif_name,
                             "Failed to allocate memory for %s "
                             "(%"TIFF_SSIZE_FORMAT" elements of %"TIFF_SSIZE_FORMAT" bytes each)",
                             "TIFFReadDirEntryArray",
@@ -3717,37 +3717,37 @@ static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, c
 	if (!recover) {
 		switch (err) {
 			case TIFFReadDirEntryErrCount:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					     "Incorrect count for \"%s\"",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrType:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					     "Incompatible type for \"%s\"",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrIo:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					     "IO error during reading of \"%s\"",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrRange:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					     "Incorrect value for \"%s\"",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrPsdif:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 			"Cannot handle different values per sample for \"%s\"",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrSizesan:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				"Sanity check on size of \"%s\" value failed",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrAlloc:
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					     "Out of memory reading of \"%s\"",
 					     tagname);
 				break;
@@ -3758,37 +3758,37 @@ static void TIFFReadDirEntryOutputErr(TIFF* tif, enum TIFFReadDirEntryErr err, c
 	} else {
 		switch (err) {
 			case TIFFReadDirEntryErrCount:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				"Incorrect count for \"%s\"; tag ignored",
 					     tagname);
 				break;
 			case TIFFReadDirEntryErrType:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				"Incompatible type for \"%s\"; tag ignored",
 					       tagname);
 				break;
 			case TIFFReadDirEntryErrIo:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 			"IO error during reading of \"%s\"; tag ignored",
 					       tagname);
 				break;
 			case TIFFReadDirEntryErrRange:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				"Incorrect value for \"%s\"; tag ignored",
 					       tagname);
 				break;
 			case TIFFReadDirEntryErrPsdif:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 	"Cannot handle different values per sample for \"%s\"; tag ignored",
 					       tagname);
 				break;
 			case TIFFReadDirEntryErrSizesan:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 		"Sanity check on size of \"%s\" value failed; tag ignored",
 					       tagname);
 				break;
 			case TIFFReadDirEntryErrAlloc:
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				"Out of memory reading of \"%s\"; tag ignored",
 					       tagname);
 				break;
@@ -3898,7 +3898,7 @@ TIFFReadDirectory(TIFF* tif)
 	dircount=TIFFFetchDirectory(tif,nextdiroff,&dir,&tif->tif_nextdiroff);
 	if (!dircount)
 	{
-		TIFFErrorExt(tif->tif_clientdata,module,
+		TIFFErrorExtR(tif,module,
 		    "Failed to read directory at offset %" PRIu64, nextdiroff);
 		return 0;
 	}
@@ -4002,7 +4002,7 @@ TIFFReadDirectory(TIFF* tif)
 			TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 			if (fii == FAILED_FII)
 			{
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				    "Unknown field with tag %"PRIu16" (0x%"PRIx16") encountered",
 				    dp->tdir_tag,dp->tdir_tag);
 				/* the following knowingly leaks the 
@@ -4012,7 +4012,7 @@ TIFFReadDirectory(TIFF* tif)
 						dp->tdir_tag,
 						(TIFFDataType) dp->tdir_type),
 					1)) {
-					TIFFWarningExt(tif->tif_clientdata,
+					TIFFWarningExtR(tif,
 					    module,
 					    "Registering anonymous field with tag %"PRIu16" (0x%"PRIx16") failed",
 					    dp->tdir_tag,
@@ -4081,7 +4081,7 @@ TIFFReadDirectory(TIFF* tif)
 			if ((dp!=0)&&(dp->tdir_count==1))
 			{
 				tif->tif_dir.td_planarconfig=PLANARCONFIG_CONTIG;
-				TIFFWarningExt(tif->tif_clientdata,module,
+				TIFFWarningExtR(tif,module,
 				    "Planarconfig tag value assumed incorrect, "
 				    "assuming data is contig instead of chunky");
 			}
@@ -4180,7 +4180,7 @@ TIFFReadDirectory(TIFF* tif)
                                                       dp->tdir_offset.toff_long8 == 0) )
                                                 {
                                                     fip = TIFFFieldWithTag(tif,dp->tdir_tag);
-                                                    TIFFWarningExt(tif->tif_clientdata,module,
+                                                    TIFFWarningExtR(tif,module,
                                                                    "Invalid data type for tag %s",
                                                                    fip ? fip->field_name : "unknown tagname");
                                                 }
@@ -4205,7 +4205,7 @@ TIFFReadDirectory(TIFF* tif)
                                                       dp->tdir_offset.toff_long8 == 0) )
                                                 {
                                                     fip = TIFFFieldWithTag(tif,dp->tdir_tag);
-                                                    TIFFWarningExt(tif->tif_clientdata,module,
+                                                    TIFFWarningExtR(tif,module,
                                                                    "Invalid data type for tag %s",
                                                                    fip ? fip->field_name : "unknown tagname");
                                                 }
@@ -4230,7 +4230,7 @@ TIFFReadDirectory(TIFF* tif)
 						if( !bitspersample_read )
 						{
 							fip = TIFFFieldWithTag(tif,dp->tdir_tag);
-							TIFFWarningExt(tif->tif_clientdata,module,
+							TIFFWarningExtR(tif,module,
 								"Ignoring %s since BitsPerSample tag not found",
 								fip ? fip->field_name : "unknown tagname");
 							continue;
@@ -4241,7 +4241,7 @@ TIFFReadDirectory(TIFF* tif)
 						if (tif->tif_dir.td_bitspersample > 24)
 						{
 							fip = TIFFFieldWithTag(tif,dp->tdir_tag);
-							TIFFWarningExt(tif->tif_clientdata,module,
+							TIFFWarningExtR(tif,module,
 								"Ignoring %s because BitsPerSample=%"PRIu16">24",
 								fip ? fip->field_name : "unknown tagname",
 								tif->tif_dir.td_bitspersample);
@@ -4320,7 +4320,7 @@ TIFFReadDirectory(TIFF* tif)
 	{
 		if (!TIFFFieldSet(tif,FIELD_PHOTOMETRIC))
 		{
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 			    "Photometric tag is missing, assuming data is YCbCr");
 			if (!TIFFSetField(tif,TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_YCBCR))
 				goto bad;
@@ -4328,13 +4328,13 @@ TIFFReadDirectory(TIFF* tif)
 		else if (tif->tif_dir.td_photometric==PHOTOMETRIC_RGB)
 		{
 			tif->tif_dir.td_photometric=PHOTOMETRIC_YCBCR;
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 			    "Photometric tag value assumed incorrect, "
 			    "assuming data is YCbCr instead of RGB");
 		}
 		if (!TIFFFieldSet(tif,FIELD_BITSPERSAMPLE))
 		{
-			TIFFWarningExt(tif->tif_clientdata,module,
+			TIFFWarningExtR(tif,module,
 			    "BitsPerSample tag is missing, assuming 8 bits per sample");
 			if (!TIFFSetField(tif,TIFFTAG_BITSPERSAMPLE,8))
 				goto bad;
@@ -4343,7 +4343,7 @@ TIFFReadDirectory(TIFF* tif)
 		{
 			if (tif->tif_dir.td_photometric==PHOTOMETRIC_RGB)
 			{
-				TIFFWarningExt(tif->tif_clientdata,module,
+				TIFFWarningExtR(tif,module,
 				    "SamplesPerPixel tag is missing, "
 				    "assuming correct SamplesPerPixel value is 3");
 				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
@@ -4351,7 +4351,7 @@ TIFFReadDirectory(TIFF* tif)
 			}
 			if (tif->tif_dir.td_photometric==PHOTOMETRIC_YCBCR)
 			{
-				TIFFWarningExt(tif->tif_clientdata,module,
+				TIFFWarningExtR(tif,module,
 				    "SamplesPerPixel tag is missing, "
 				    "applying correct SamplesPerPixel value of 3");
 				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
@@ -4386,7 +4386,7 @@ TIFFReadDirectory(TIFF* tif)
 		tif->tif_flags |= TIFF_ISTILED;
 	}
 	if (!tif->tif_dir.td_nstrips) {
-		TIFFErrorExt(tif->tif_clientdata, module,
+		TIFFErrorExtR(tif, module,
 		    "Cannot handle zero number of %s",
 		    isTiled(tif) ? "tiles" : "strips");
 		goto bad;
@@ -4461,7 +4461,7 @@ TIFFReadDirectory(TIFF* tif)
                 uint16_t old_extrasamples;
                 uint16_t *new_sampleinfo;
 
-                TIFFWarningExt(tif->tif_clientdata,module, "Sum of Photometric type-related "
+                TIFFWarningExtR(tif,module, "Sum of Photometric type-related "
                     "color channels and ExtraSamples doesn't match SamplesPerPixel. "
                     "Defining non-color channels as ExtraSamples.");
 
@@ -4471,7 +4471,7 @@ TIFFReadDirectory(TIFF* tif)
                 // sampleinfo should contain information relative to these new extra samples
                 new_sampleinfo = (uint16_t*) _TIFFcalloc(tif->tif_dir.td_extrasamples, sizeof(uint16_t));
                 if (!new_sampleinfo) {
-                    TIFFErrorExt(tif->tif_clientdata, module, "Failed to allocate memory for "
+                    TIFFErrorExtR(tif, module, "Failed to allocate memory for "
                                                               "temporary new sampleinfo array "
                                                               "(%"PRIu16" 16 bit elements)",
                                 tif->tif_dir.td_extrasamples);
@@ -4521,7 +4521,7 @@ TIFFReadDirectory(TIFF* tif)
 			    MissingRequired(tif, "StripByteCounts");
 			    goto bad;
 			}
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 				"TIFF directory is missing required "
 				"\"StripByteCounts\" field, calculating from imagelength");
 			if (EstimateStripByteCounts(tif, dir, dircount) < 0)
@@ -4536,7 +4536,7 @@ TIFFReadDirectory(TIFF* tif)
 			 * correct value is!  Try and handle the simple case
 			 * of estimating the size of a one strip image.
 			 */
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 			    "Bogus \"StripByteCounts\" field, ignoring and calculating from imagelength");
 			if(EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
@@ -4558,7 +4558,7 @@ TIFFReadDirectory(TIFF* tif)
                          * as it would always force us to load the strip/tile
                          * information.
 			 */
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 			    "Wrong \"StripByteCounts\" field, ignoring and calculating from imagelength");
 			if (EstimateStripByteCounts(tif, dir, dircount) < 0)
 			    goto bad;
@@ -4647,7 +4647,7 @@ TIFFReadDirectory(TIFF* tif)
 
 	tif->tif_scanlinesize = TIFFScanlineSize(tif);
 	if (!tif->tif_scanlinesize) {
-		TIFFErrorExt(tif->tif_clientdata, module,
+		TIFFErrorExtR(tif, module,
 		    "Cannot handle zero scanline size");
 		return (0);
 	}
@@ -4655,13 +4655,13 @@ TIFFReadDirectory(TIFF* tif)
 	if (isTiled(tif)) {
 		tif->tif_tilesize = TIFFTileSize(tif);
 		if (!tif->tif_tilesize) {
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 			     "Cannot handle zero tile size");
 			return (0);
 		}
 	} else {
 		if (!TIFFStripSize(tif)) {
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 			    "Cannot handle zero strip size");
 			return (0);
 		}
@@ -4685,7 +4685,7 @@ TIFFReadDirectoryCheckOrder(TIFF* tif, TIFFDirEntry* dir, uint16_t dircount)
 	{
 		if (o->tdir_tag<m)
 		{
-			TIFFWarningExt(tif->tif_clientdata,module,
+			TIFFWarningExtR(tif,module,
 			    "Invalid TIFF directory; tags are not sorted in ascending order");
 			break;
 		}
@@ -4759,7 +4759,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 	dircount=TIFFFetchDirectory(tif,diroff,&dir,NULL);
 	if (!dircount)
 	{
-		TIFFErrorExt(tif->tif_clientdata,module,
+		TIFFErrorExtR(tif,module,
 		    "Failed to read custom directory at offset %" PRIu64,diroff);
 		return 0;
 	}
@@ -4771,14 +4771,14 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 		TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
 		if (fii == FAILED_FII)
 		{
-			TIFFWarningExt(tif->tif_clientdata, module,
+			TIFFWarningExtR(tif, module,
 			    "Unknown field with tag %"PRIu16" (0x%"PRIx16") encountered",
 			    dp->tdir_tag, dp->tdir_tag);
 			if (!_TIFFMergeFields(tif, _TIFFCreateAnonField(tif,
 						dp->tdir_tag,
 						(TIFFDataType) dp->tdir_type),
 					     1)) {
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 				    "Registering anonymous field with tag %"PRIu16" (0x%"PRIx16") failed",
 				    dp->tdir_tag, dp->tdir_tag);
 				dp->tdir_ignore = TRUE;
@@ -4808,7 +4808,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 				}
 				if (fii==0xFFFF)
 				{
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 					    "Wrong data type %"PRIu16" for \"%s\"; tag ignored",
 					    dp->tdir_type,fip->field_name);
 					dp->tdir_ignore = TRUE;
@@ -4914,7 +4914,7 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16_t dircount)
 			uint64_t datasize;
 			typewidth = TIFFDataWidth((TIFFDataType) dp->tdir_type);
 			if (typewidth == 0) {
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "Cannot determine size of unknown tag type %"PRIu16,
 				    dp->tdir_type);
 				return -1;
@@ -4989,7 +4989,7 @@ MissingRequired(TIFF* tif, const char* tagname)
 {
 	static const char module[] = "MissingRequired";
 
-	TIFFErrorExt(tif->tif_clientdata, module,
+	TIFFErrorExtR(tif, module,
 	    "TIFF directory is missing required \"%s\" field",
 	    tagname);
 }
@@ -5008,7 +5008,7 @@ TIFFCheckDirOffset(TIFF* tif, uint64_t diroff)
 	if (diroff == 0)			/* no more directories */
 		return 0;
 	if (tif->tif_dirnumber == 65535) {
-	    TIFFErrorExt(tif->tif_clientdata, "TIFFCheckDirOffset",
+	    TIFFErrorExtR(tif, "TIFFCheckDirOffset",
 			 "Cannot handle more than 65535 TIFF directories");
 	    return 0;
 	}
@@ -5052,14 +5052,14 @@ CheckDirCount(TIFF* tif, TIFFDirEntry* dir, uint32_t count)
 {
 	if ((uint64_t)count > dir->tdir_count) {
 		const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
-		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
+		TIFFWarningExtR(tif, tif->tif_name,
 	"incorrect count for field \"%s\" (%" PRIu64 ", expecting %"PRIu32"); tag ignored",
 		    fip ? fip->field_name : "unknown tagname",
 		    dir->tdir_count, count);
 		return (0);
 	} else if ((uint64_t)count < dir->tdir_count) {
 		const TIFFField* fip = TIFFFieldWithTag(tif, dir->tdir_tag);
-		TIFFWarningExt(tif->tif_clientdata, tif->tif_name,
+		TIFFWarningExtR(tif, tif->tif_name,
 	"incorrect count for field \"%s\" (%" PRIu64 ", expecting %"PRIu32"); tag trimmed",
 		    fip ? fip->field_name : "unknown tagname",
 		    dir->tdir_count, count);
@@ -5095,7 +5095,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		*nextdiroff = 0;
 	if (!isMapped(tif)) {
 		if (!SeekOK(tif, tif->tif_diroff)) {
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 				"%s: Seek error accessing TIFF directory",
 				tif->tif_name);
 			return 0;
@@ -5103,7 +5103,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		if (!(tif->tif_flags&TIFF_BIGTIFF))
 		{
 			if (!ReadOK(tif, &dircount16, sizeof (uint16_t))) {
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "%s: Can not read TIFF directory count",
 				    tif->tif_name);
 				return 0;
@@ -5112,7 +5112,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 				TIFFSwabShort(&dircount16);
 			if (dircount16>4096)
 			{
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "Sanity check on directory count failed, this is probably not a valid IFD offset");
 				return 0;
 			}
@@ -5120,7 +5120,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		} else {
 			uint64_t dircount64;
 			if (!ReadOK(tif, &dircount64, sizeof (uint64_t))) {
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					"%s: Can not read TIFF directory count",
 					tif->tif_name);
 				return 0;
@@ -5129,7 +5129,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>4096)
 			{
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "Sanity check on directory count failed, this is probably not a valid IFD offset");
 				return 0;
 			}
@@ -5141,7 +5141,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		if (origdir == NULL)
 			return 0;
 		if (!ReadOK(tif, origdir, (tmsize_t)(dircount16*dirsize))) {
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 				"%.100s: Can not read TIFF directory",
 				tif->tif_name);
 			_TIFFfree(origdir);
@@ -5173,7 +5173,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		tmsize_t off;
 		if (tif->tif_diroff > (uint64_t)INT64_MAX)
 		{
-			TIFFErrorExt(tif->tif_clientdata,module,"Can not read TIFF directory count");
+			TIFFErrorExtR(tif,module,"Can not read TIFF directory count");
 			return(0);
 		}
 		off = (tmsize_t) tif->tif_diroff;
@@ -5191,7 +5191,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		{
 			m=off+sizeof(uint16_t);
 			if ((m<off) || (m<(tmsize_t)sizeof(uint16_t)) || (m > tif->tif_size)) {
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					"Can not read TIFF directory count");
 				return 0;
 			} else {
@@ -5203,7 +5203,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 				TIFFSwabShort(&dircount16);
 			if (dircount16>4096)
 			{
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "Sanity check on directory count failed, this is probably not a valid IFD offset");
 				return 0;
 			}
@@ -5214,7 +5214,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 			uint64_t dircount64;
 			m=off+sizeof(uint64_t);
 			if ((m<off) || (m<(tmsize_t)sizeof(uint64_t)) || (m > tif->tif_size)) {
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 					"Can not read TIFF directory count");
 				return 0;
 			} else {
@@ -5226,7 +5226,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 				TIFFSwabLong8(&dircount64);
 			if (dircount64>4096)
 			{
-				TIFFErrorExt(tif->tif_clientdata, module,
+				TIFFErrorExtR(tif, module,
 				    "Sanity check on directory count failed, this is probably not a valid IFD offset");
 				return 0;
 			}
@@ -5235,7 +5235,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 		}
 		if (dircount16 == 0 )
 		{
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 			             "Sanity check on directory count failed, zero tag directories not supported");
 			return 0;
 		}
@@ -5246,7 +5246,7 @@ TIFFFetchDirectory(TIFF* tif, uint64_t diroff, TIFFDirEntry** pdir,
 			return 0;
 		m=off+dircount16*dirsize;
 		if ((m<off)||(m<(tmsize_t)(dircount16*dirsize))||(m>tif->tif_size)) {
-			TIFFErrorExt(tif->tif_clientdata, module,
+			TIFFErrorExtR(tif, module,
 				     "Can not read TIFF directory");
 			_TIFFfree(origdir);
 			return 0;
@@ -5342,7 +5342,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 	TIFFReadDirectoryFindFieldInfo(tif,dp->tdir_tag,&fii);
         if( fii == FAILED_FII )
         {
-            TIFFErrorExt(tif->tif_clientdata, "TIFFFetchNormalTag",
+            TIFFErrorExtR(tif, "TIFFFetchNormalTag",
                          "No definition found for tag %"PRIu16,
                          dp->tdir_tag);
             return 0;
@@ -5387,11 +5387,11 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 						}
 					}
 					if (mb+1<(uint32_t)dp->tdir_count)
-						TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" contains null byte in value; value incorrectly truncated during reading due to implementation limitations",fip->field_name);
+						TIFFWarningExtR(tif,module,"ASCII value for tag \"%s\" contains null byte in value; value incorrectly truncated during reading due to implementation limitations",fip->field_name);
 					else if (mb+1>(uint32_t)dp->tdir_count)
 					{
 						uint8_t* o;
-						TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" does not end in null byte",fip->field_name);
+						TIFFWarningExtR(tif,module,"ASCII value for tag \"%s\" does not end in null byte",fip->field_name);
 						/* TIFFReadDirEntryArrayWithLimit() ensures this can't be larger than MAX_SIZE_TAG_DATA */
 						assert((uint32_t)dp->tdir_count + 1 == dp->tdir_count + 1);
 						o=_TIFFmalloc((uint32_t)dp->tdir_count + 1);
@@ -5567,7 +5567,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount==2);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=2) {
-					TIFFWarningExt(tif->tif_clientdata,module,
+					TIFFWarningExtR(tif,module,
 						       "incorrect count for field \"%s\", expected 2, got %"PRIu64,
 						       fip->field_name, dp->tdir_count);
 					return(0);
@@ -5590,7 +5590,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=(uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata,module,
+					TIFFWarningExtR(tif,module,
 							"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 							fip->field_name,(int) fip->field_readcount, dp->tdir_count);
 					return(0); 
@@ -5616,7 +5616,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=(uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5642,7 +5642,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5668,7 +5668,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5694,7 +5694,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5720,7 +5720,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5746,7 +5746,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			assert(fip->field_readcount >= 1);
 			assert(fip->field_passcount == 0);
 			if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 					"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 					fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 				return(0);
@@ -5771,7 +5771,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 			assert(fip->field_readcount >= 1);
 			assert(fip->field_passcount == 0);
 			if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-				TIFFWarningExt(tif->tif_clientdata, module,
+				TIFFWarningExtR(tif, module,
 					"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 					fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 				return(0);
@@ -5796,7 +5796,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5823,7 +5823,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count != (uint64_t)fip->field_readcount) {
-					TIFFWarningExt(tif->tif_clientdata, module,
+					TIFFWarningExtR(tif, module,
 						"incorrect count for field \"%s\", expected %d, got %"PRIu64,
 						fip->field_name, (int)fip->field_readcount, dp->tdir_count);
 					return(0);
@@ -5858,7 +5858,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 						int m;
 						if( data != 0 && dp->tdir_count > 0 && data[dp->tdir_count-1] != '\0' )
 						{
-						    TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" does not end in null byte. Forcing it to be null",fip->field_name);
+						    TIFFWarningExtR(tif,module,"ASCII value for tag \"%s\" does not end in null byte. Forcing it to be null",fip->field_name);
 						    data[dp->tdir_count-1] = '\0';
 						}
 						m=TIFFSetField(tif, dp->tdir_tag, (uint16_t)(dp->tdir_count), data);
@@ -6123,7 +6123,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 					int m;
 					if( data != 0 && dp->tdir_count > 0 && data[dp->tdir_count-1] != '\0' )
 					{
-						TIFFWarningExt(tif->tif_clientdata,module,"ASCII value for tag \"%s\" does not end in null byte. Forcing it to be null",fip->field_name);
+						TIFFWarningExtR(tif,module,"ASCII value for tag \"%s\" does not end in null byte. Forcing it to be null",fip->field_name);
 											data[dp->tdir_count-1] = '\0';
 					}
 					m=TIFFSetField(tif, dp->tdir_tag, (uint32_t)(dp->tdir_count), data);
@@ -6760,7 +6760,7 @@ int _TIFFPartialReadStripArray(TIFF* tif, TIFFDirEntry* dirent,
     }
     else
     {
-        TIFFErrorExt(tif->tif_clientdata, module,
+        TIFFErrorExtR(tif, module,
                  "Invalid type for [Strip|Tile][Offset/ByteCount] tag");
         panVals[strile] = 0;
         return 0;
@@ -6784,7 +6784,7 @@ int _TIFFPartialReadStripArray(TIFF* tif, TIFFDirEntry* dirent,
     /* To avoid later unsigned integer overflows */
     if( nBaseOffset > (uint64_t)INT64_MAX )
     {
-        TIFFErrorExt(tif->tif_clientdata, module,
+        TIFFErrorExtR(tif, module,
                  "Cannot read offset/size for strile %d", strile);
         panVals[strile] = 0;
         return 0;
@@ -6803,7 +6803,7 @@ int _TIFFPartialReadStripArray(TIFF* tif, TIFFDirEntry* dirent,
         nOffsetEndPage = nLastStripOffset;
     if( nOffsetStartPage >= nOffsetEndPage )
     {
-        TIFFErrorExt(tif->tif_clientdata, module,
+        TIFFErrorExtR(tif, module,
                  "Cannot read offset/size for strile %d", strile);
         panVals[strile] = 0;
         return 0;
@@ -6818,7 +6818,7 @@ int _TIFFPartialReadStripArray(TIFF* tif, TIFFDirEntry* dirent,
     nRead = TIFFReadFile(tif, buffer, nToRead);
     if( nRead < nToRead )
     {
-        TIFFErrorExt(tif->tif_clientdata, module,
+        TIFFErrorExtR(tif, module,
                  "Cannot read offset/size for strile around ~%d", strile);
         return 0;
     }
@@ -6903,7 +6903,7 @@ static int _TIFFFetchStrileValue(TIFF* tif,
             /* for the offset array. */
             if( strile > filesize / sizeof(uint32_t) )
             {
-                TIFFErrorExt(tif->tif_clientdata, module, "File too short");
+                TIFFErrorExtR(tif, module, "File too short");
                 return 0;
             }
         }
@@ -6928,7 +6928,7 @@ static int _TIFFFetchStrileValue(TIFF* tif,
 #if SIZEOF_SIZE_T == 4
         if( nArraySize != nArraySize64 )
         {
-            TIFFErrorExt(tif->tif_clientdata, module,
+            TIFFErrorExtR(tif, module,
                         "Cannot allocate strip offset and bytecount arrays");
             return 0;
         }
@@ -6956,7 +6956,7 @@ static int _TIFFFetchStrileValue(TIFF* tif,
         }
         else
         {
-            TIFFErrorExt(tif->tif_clientdata, module,
+            TIFFErrorExtR(tif, module,
                         "Cannot allocate strip offset and bytecount arrays");
             _TIFFfree(td->td_stripoffset_p);
             td->td_stripoffset_p = NULL;

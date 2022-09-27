@@ -196,6 +196,9 @@ struct tiff {
 	 * setting up an old tag extension scheme. */
 	TIFFFieldArray*      tif_fieldscompat;
 	size_t               tif_nfieldscompat;
+	/* Error handler support */
+    TIFFErrorHandlerExtR  tif_errorhandler;
+    TIFFErrorHandlerExtR  tif_warnhandler;
 };
 
 #define isPseudoTag(t) (t > 0xffff)            /* is tag value normal or pseudo */
