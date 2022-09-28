@@ -60,7 +60,7 @@
 
 #define PS_UNIT_SIZE	72.0F
 
-#define TIFF_DIR_MAX    65534
+
 
 #define DEFAULT_MAX_MALLOC (256 * 1024 * 1024)
 

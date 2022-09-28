@@ -208,7 +208,7 @@ static   char tiffcrop_rev_date[] = "15-08-2022";
 #define DUMP_TEXT   1
 #define DUMP_RAW    2
 
-#define TIFF_DIR_MAX  65534
+
 
 /* Offsets into buffer for margins and fixed width and length segments */
 struct offset {

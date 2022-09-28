@@ -1723,12 +1723,12 @@ TIFFAdvanceDirectory(TIFF* tif, uint64_t* nextdir, uint64_t* off)
 /*
  * Count the number of directories in a file.
  */
-uint16_t
+uint32_t
 TIFFNumberOfDirectories(TIFF* tif)
 {
 	static const char module[] = "TIFFNumberOfDirectories";
 	uint64_t nextdir;
-	uint16_t n;
+    uint32_t n;
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
 	else
@@ -1736,15 +1736,15 @@ TIFFNumberOfDirectories(TIFF* tif)
 	n = 0;
 	while (nextdir != 0 && TIFFAdvanceDirectory(tif, &nextdir, NULL))
         {
-                if (n != 65535) {
+                if (n != TIFF_DIR_MAX) {
                         ++n;
                 }
 		else
                 {
                         TIFFErrorExt(tif->tif_clientdata, module,
-                                     "Directory count exceeded 65535 limit,"
+                                     "Directory count exceeded TIFF_DIR_MAX limit,"
                                      " giving up on counting.");
-                        return (65535);
+                        return (TIFF_DIR_MAX);
                 }
         }
 	return (n);
@@ -1755,10 +1755,10 @@ TIFFNumberOfDirectories(TIFF* tif)
  * NB: Directories are numbered starting at 0.
  */
 int
-TIFFSetDirectory(TIFF* tif, uint16_t dirn)
+TIFFSetDirectory(TIFF* tif, uint32_t dirn)
 {
 	uint64_t nextdir;
-	uint16_t n;
+    uint32_t n;
 
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 		nextdir = tif->tif_header.classic.tiff_diroff;
