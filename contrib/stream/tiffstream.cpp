@@ -158,7 +158,7 @@ TiffStream::map(thandle_t fd, tdata_t* phase, toff_t* psize)
 }
 
 void
-TiffStream::unmap(thandle_t fd, tdata_t base, tsize_t size)
+TiffStream::unmap(thandle_t fd, void* base, toff_t size)
 {
 }
 

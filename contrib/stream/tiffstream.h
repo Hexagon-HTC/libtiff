@@ -3,10 +3,11 @@
 #ifndef _TIFF_STREAM_H_
 #define _TIFF_STREAM_H_
 
-#include <iostream.h>
+#include <iostream>
 
 #include "tiffio.h"
 
+using namespace std;
 class TiffStream {
 
 public:
@@ -35,7 +36,7 @@ public:
 	static toff_t size(thandle_t fd);
 	static int close(thandle_t fd);
 	static int map(thandle_t fd, tdata_t* phase, toff_t* psize);
-	static void unmap(thandle_t fd, tdata_t base, tsize_t size);
+	static void unmap(thandle_t fd, void* base, toff_t size);
 
 public:
     // query method
