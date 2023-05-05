@@ -180,7 +180,7 @@ install(FILES ${tiff_public_HEADERS}
 
 set(TIFF_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/tiff)
 install(EXPORT TiffTargets
-        FILE TiffTargets.cmake
+        FILE tiff-config.cmake
         NAMESPACE TIFF::
         DESTINATION ${TIFF_CONFIGDIR}
 )
