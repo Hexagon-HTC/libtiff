@@ -46,6 +46,7 @@ set(tiff_private_HEADERS
 
 
 add_library(tiff libtiff.def)
+add_library(TIFF::TIFF ALIAS tiff)
 
 target_sources(tiff PRIVATE
         ${tiff_public_HEADERS}
