@@ -104,6 +104,7 @@ target_include_directories(tiff
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE
         ${TIFF_INCLUDES}
 )
@@ -120,7 +121,7 @@ if(ZIP_SUPPORT AND LIBDEFLATE_SUPPORT)
   list(APPEND tiff_libs_private_list "${Deflate_LIBRARY}")
 endif()
 if(JPEG_SUPPORT)
-  target_link_libraries(tiff PRIVATE libjpeg-turbo::jpeg)
+  target_link_libraries(tiff PRIVATE libjpeg-turbo::turbojpeg)
   string(APPEND tiff_requires_private " libjpeg")
   if(JPEG_DUAL_MODE_8_12)
     target_include_directories(tiff PRIVATE ${JPEG12_INCLUDE_DIR})
