@@ -46,7 +46,8 @@ set(tiff_private_HEADERS
 
 
 add_library(tiff libtiff.def)
-add_library(TIFF::TIFF ALIAS tiff)
+
+add_library(TIFF:TIFF ALIAS tiff)
 
 target_sources(tiff PRIVATE
         ${tiff_public_HEADERS}
@@ -170,21 +171,22 @@ if(HAVE_LD_VERSION_SCRIPT)
                         "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libtiff.map")
 endif()
 
-export(TARGETS tiff NAMESPACE TIFF:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libtiffTargets.cmake")
 install(TARGETS tiff EXPORT TiffTargets
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+set_target_properties(tiff PROPERTIES EXPORT_NAME TIFF)
+
+install(EXPORT TiffTargets
+        NAMESPACE TIFF::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tiff
+        FILE tiff-config.cmake)
+
 install(FILES ${tiff_public_HEADERS}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 set(TIFF_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/tiff)
-install(EXPORT TiffTargets
-        FILE tiff-config.cmake
-        NAMESPACE TIFF::
-        DESTINATION ${TIFF_CONFIGDIR}
-)
 
 if(CXX_SUPPORT)
   set(tiffxx_HEADERS
