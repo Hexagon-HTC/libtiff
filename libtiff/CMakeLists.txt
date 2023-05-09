@@ -46,6 +46,7 @@ set(tiff_private_HEADERS
 
 
 add_library(tiff libtiff.def)
+
 add_library(TIFF::TIFF ALIAS tiff)
 
 target_sources(tiff PRIVATE
@@ -103,6 +104,7 @@ target_include_directories(tiff
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE
         ${TIFF_INCLUDES}
 )
@@ -149,10 +151,6 @@ if(WEBP_SUPPORT)
   target_link_libraries(tiff PRIVATE WebP::WebP)
   string(APPEND tiff_requires_private " libwebp")
 endif()
-target_link_libraries(tiff PRIVATE CMath::CMath)
-if(CMath_LIBRARY)
-  list(APPEND tiff_libs_private_list "${CMath_LIBRARY}")
-endif()
 
 set(tiff_libs_private_list "${tiff_libs_private_list}" PARENT_SCOPE)
 set(tiff_requires_private "${tiff_requires_private}" PARENT_SCOPE)
@@ -170,21 +168,22 @@ if(HAVE_LD_VERSION_SCRIPT)
                         "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libtiff.map")
 endif()
 
-export(TARGETS tiff NAMESPACE TIFF:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libtiffTargets.cmake")
 install(TARGETS tiff EXPORT TiffTargets
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+set_target_properties(tiff PROPERTIES EXPORT_NAME TIFF)
+
+install(EXPORT TiffTargets
+        NAMESPACE TIFF::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tiff
+        FILE tiff-config.cmake)
+
 install(FILES ${tiff_public_HEADERS}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 set(TIFF_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/tiff)
-install(EXPORT TiffTargets
-        FILE tiff-config.cmake
-        NAMESPACE TIFF::
-        DESTINATION ${TIFF_CONFIGDIR}
-)
 
 if(CXX_SUPPORT)
   set(tiffxx_HEADERS

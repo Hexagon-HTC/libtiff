@@ -25,10 +25,9 @@
 
 
 # JPEG
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 set(JPEG_SUPPORT FALSE)
 find_package(libjpeg-turbo REQUIRED CONFIG)
-option(jpeg "use libjpeg (required for JPEG compression)" ${libjpeg-turbo_FOUNDs})
+option(jpeg "use libjpeg (required for JPEG compression)" ${libjpeg-turbo_FOUND})
 if (jpeg AND libjpeg-turbo_FOUND)
     set(JPEG_SUPPORT TRUE)
 endif()
