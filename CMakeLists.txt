@@ -124,10 +124,6 @@ include(WindowsSupport)
 # Orthogonal features
 include(LibraryFeatures)
 
-
-# math.h/libm portability
-find_package(CMath REQUIRED)
-
 # Release support
 include(Release)
 
